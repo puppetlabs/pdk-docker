@@ -1,1 +1,5 @@
+.bundle
+check-for-pdk-release.rb
+Gemfile
+Gemfile.*
 README.md
