@@ -2,7 +2,11 @@
 
 // Jenkins Declarative Pipeline format
 pipeline {
-  agent { label 'worker' }
+  agent {
+    docker {
+      image 'ruby:2.6'
+    }
+  }
 
   triggers {
     // Execute every 15 minutess 
@@ -10,12 +14,6 @@ pipeline {
   }
 
   stages {
-    stage('Presuite') {
-      steps {
-        sh 'apt-get install -y libssl-dev'
-      }
-    }
-
     stage('PDK Docker Promote') {
       steps {
         sh('jenkins/pdk-promote.sh')

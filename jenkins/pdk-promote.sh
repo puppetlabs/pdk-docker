@@ -2,9 +2,9 @@
 
 export GEM_SOURCE="https://artifactory.delivery.puppetlabs.net/artifactory/api/gems/rubygems/"
 
-source /usr/local/rvm/scripts/rvm
+#source /usr/local/rvm/scripts/rvm
 #rvm list rubies
-rvm use 2.1.9 || exit 1
+#rvm use 2.1.9 || exit 1
 
 if [ "$GIT_BRANCH" = "origin/master" ]; then
   echo "GIT_BRANCH is 'origin/master', we're doing it live!"
