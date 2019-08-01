@@ -2,4 +2,6 @@
 check-for-pdk-release.rb
 Gemfile
 Gemfile.*
+Jenkinsfile
+jenkins
 README.md
