@@ -2,7 +2,7 @@
 
 This repository provides official docker images for the Puppet Development Kit (PDK).
 
-Images are published to Docker Hub at [https://hub.docker.com/r/puppet/pdk]().
+Images are published to Docker Hub at [https://hub.docker.com/r/puppet/pdk](https://hub.docker.com/r/puppet/pdk).
 
 The following image tags are available from Docker Hub:
 
@@ -11,11 +11,11 @@ The following image tags are available from Docker Hub:
  be a pre-release build
 
 Additionally there are version-specific tags for every PDK release that makes it on
-to [http://nightlies.puppet.com/](), for example `1.12.0.0` (stable release),
+to [http://nightlies.puppet.com/](http://nightlies.puppet.com/), for example `1.12.0.0` (stable release),
 `1.13.0.0.pre.2.g9c61983` (nightly pre-release).
 
-To learn more about the PDK, visit [https://puppet.com/docs/pdk/latest/pdk.html]()
-and [https://github.com/puppetlabs/pdk]().
+To learn more about the PDK, visit [https://puppet.com/docs/pdk/latest/pdk.html](https://puppet.com/docs/pdk/latest/pdk.html)
+and [https://github.com/puppetlabs/pdk](https://github.com/puppetlabs/pdk).
 
 ## How images are built
 
