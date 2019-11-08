@@ -10,11 +10,11 @@ ADD install-onceover.sh .
 ADD pdk-release.env .
 
 RUN ["./install-pdk-release.sh"]
+RUN ["./install-onceover.sh"]
 
 RUN apt-get remove -y curl && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* && \
-    ./install-onceover.sh && \
     rm install-pdk-release.sh install-onceover.sh
 
 ENV PATH="${PATH}:/opt/puppetlabs/pdk/private/git/bin"
