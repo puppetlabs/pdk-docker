@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Check for required args
+: "${1:?Please provide a module release slug (e.g. puppetlabs-apache-1.0.0) as the first argument}"
+# TODO: add format as an available arg?
+
+# TODO: check if release slug matches regex and exit if not
+
+release_slug="$1"
+
+# Check for custom download URI or use default
+if [[ -z "${RELEASE_URI}" ]]; then
+  # TODO: write this to stderr
+  #echo "DEBUG: RELEASE_URI not set, using default..."
+  download_uri="https://forgeapi.puppet.com/v3/files/${release_slug}.tar.gz"
+else
+  download_uri=${RELEASE_URI}
+fi
+
+pushd workspace > /dev/null || exit
+
+# Download and extract module release
+curl -sS -O "${download_uri}"
+
+# TODO: check if URL existed/download succeeded
+
+tar -xzf "${release_slug}.tar.gz"
+
+# Change to the module root by finding the first instance of metadata.json
+pushd -- "$(find . -name "metadata.json" -type f -printf '%h' -quit)" > /dev/null || exit

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Post results back to specified URI
+curl \
+  --fail \
+  --progress-bar \
+  --request PATCH \
+  --header "Authorization: Bearer ${WEBHOOK_TOKEN}" \
+  --data-urlencode content@anubis_output.json \
+  "${WEBHOOK_URI}"
