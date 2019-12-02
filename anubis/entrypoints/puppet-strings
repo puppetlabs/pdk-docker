@@ -18,7 +18,8 @@ export PATH=$PATH:/opt/puppetlabs/pdk/private/ruby/2.5.7/bin
 export GEM_PATH=/opt/puppetlabs/pdk/private/ruby/2.5.7/lib/ruby/gems/2.5.0:/opt/puppetlabs/pdk/share/cache/ruby/2.5.0:/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0
 
 # Run strings and emit output to json document
-/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0/bin/puppet strings generate --format json | tee anubis_output.json
+/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0/bin/puppet strings generate --format json --out anubis_output.json
+cat anubis_output.json
 
 # Post results back to given API endpoint
 # shellcheck source=../shared/entrypoint-anubis-post disable=SC1091
