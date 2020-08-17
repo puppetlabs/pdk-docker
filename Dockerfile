@@ -7,7 +7,7 @@ ADD install-onceover.sh .
 ADD pdk-release.env .
 
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl openssh-client && \
     ./install-pdk-release.sh && \
     ./install-onceover.sh && \
     apt-get purge -y curl && \
