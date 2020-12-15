@@ -14,8 +14,8 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/../shared/entrypoint-anubis-pre"
 
 # TODO make a PDK frontend/backdoor for this? like a wrapper in /opt/puppetlabs/pdk/private?
-export PATH=$PATH:/opt/puppetlabs/pdk/private/ruby/2.5.7/bin
-export GEM_PATH=/opt/puppetlabs/pdk/private/ruby/2.5.7/lib/ruby/gems/2.5.0:/opt/puppetlabs/pdk/share/cache/ruby/2.5.0:/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0
+export PATH=$PATH:/opt/puppetlabs/pdk/private/ruby/2.5.8/bin
+export GEM_PATH=/opt/puppetlabs/pdk/private/ruby/2.5.8/lib/ruby/gems/2.5.0:/opt/puppetlabs/pdk/share/cache/ruby/2.5.0:/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0
 
 # Run strings and emit output to json document
 /opt/puppetlabs/pdk/private/puppet/ruby/2.5.0/bin/puppet strings generate --format json --out anubis_output.json
