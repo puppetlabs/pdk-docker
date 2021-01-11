@@ -13,27 +13,19 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 # shellcheck source=../shared/entrypoint-anubis-pre disable=SC1091
 . "$DIR/../shared/entrypoint-anubis-pre"
 
-manifests=0
-lines=0
-
-for f in $(find manifests -type f -name "*.pp")
-do
-  manifests=$((manifests+1))
-  lines=$(($lines + $(wc -l < $f)))
-done
-
-# TODO make a PDK frontend/backdoor for this? like a wrapper in /opt/puppetlabs/pdk/private?
+# TODO: these hardcoded values will be replaced by output from something like
+# eval $(pdk environment --puppet-version=\${\$puppet_version})
 export PATH=$PATH:/opt/puppetlabs/pdk/private/ruby/2.5.8/bin:/opt/puppetlabs/pdk/private/ruby/2.5.8/lib/ruby/gems/2.5.0
 export GEM_PATH=/opt/puppetlabs/pdk/private/ruby/2.5.8/lib/ruby/gems/2.5.0:/opt/puppetlabs/pdk/share/cache/ruby/2.5.0:/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0
 
-# Run lint and emit output to json document
-/opt/puppetlabs/pdk/share/cache/ruby/2.5.0/bin/puppet-lint --json manifests > lint_output.json || true
+# Run metadata-json-lint and emit output to json document
+/opt/puppetlabs/pdk/share/cache/ruby/2.5.0/bin/metadata-json-lint --format json > metadata_output.json || true
 exit_code=$?
 # Ensure file contains valid JSON if there's no output
-if [[ ! -s lint_output.json ]]; then
-  echo 'null' > lint_output.json
+if [[ ! -s metadata_output.json ]]; then
+  echo 'null' > metadata_output.json
 fi
-ruby -e "require 'json'; puts ({ exit_code: $exit_code, manifests: $manifests, lines: $lines, output: JSON.parse(File.read('lint_output.json')) }).to_json" > anubis_output.json
+ruby -e "require 'json'; puts ({ exit_code: $exit_code, output: JSON.parse(File.read('metadata_output.json')) }).to_json" > anubis_output.json
 cat anubis_output.json
 
 # Post results back to given API endpoint
