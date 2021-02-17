@@ -76,7 +76,18 @@ jobs:
             ${{ secrets.AWS_FORGE_ID }}.dkr.ecr.us-west-2.amazonaws.com/anubis:${{ env.PDK_TAG }}
             puppet/pdk:${{ env.PDK_TAG }}
       -
+        name: Build and push PDK DinD
+        id: docker_build_pdk_dind
+        uses: docker/build-push-action@v2
+        with:
+          context: ./Dockerfile.dind
+          push: true
+          tags: |
+            ${{ secrets.AWS_FORGE_ID }}.dkr.ecr.us-west-2.amazonaws.com/anubis-dind:${{ env.PDK_TAG }}
+            puppet/pdk-dind:${{ env.PDK_TAG }}
+      -
         name: Image digest
         run: |
           echo 'Anubis: ${{ steps.docker_build_anubis.outputs.digest }}'
           echo 'PDK: ${{ steps.docker_build_pdk.outputs.digest }}'
+          echo 'PDK-DinD: ${{ steps.docker_build_pdk_dind.outputs.digest }}'
