@@ -16,21 +16,27 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 manifests=0
 lines=0
 
-for f in $(find manifests -type f -name "*.pp")
-do
-  manifests=$((manifests+1))
-  lines=$(($lines + $(wc -l < $f)))
-done
+if [ -d "manifests" ]; then
+  for f in $(find manifests -type f -name "*.pp")
+  do
+    manifests=$((manifests+1))
+    lines=$(($lines + $(wc -l < $f)))
+  done
+fi
 
 # TODO make a PDK frontend/backdoor for this? like a wrapper in /opt/puppetlabs/pdk/private?
 export PATH=$PATH:/opt/puppetlabs/pdk/private/ruby/2.5.8/bin:/opt/puppetlabs/pdk/private/ruby/2.5.8/lib/ruby/gems/2.5.0
 export GEM_PATH=/opt/puppetlabs/pdk/private/ruby/2.5.8/lib/ruby/gems/2.5.0:/opt/puppetlabs/pdk/share/cache/ruby/2.5.0:/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0
 
 # Run lint and emit output to json document
-/opt/puppetlabs/pdk/share/cache/ruby/2.5.0/bin/puppet-lint --json manifests > lint_output.json || true
-exit_code=$?
-# Ensure file contains valid JSON if there's no output
-if [[ ! -s lint_output.json ]]; then
+{
+  /opt/puppetlabs/pdk/share/cache/ruby/2.5.0/bin/puppet-lint --json manifests > lint_output.json
+  exit_code=$?
+} || {
+  true
+}
+# Ensure file contains valid JSON if there are no manifests or there's no output
+if [[ $manifests -eq 0 ]] || [[ ! -s lint_output.json ]]; then
   echo 'null' > lint_output.json
 fi
 ruby -e "require 'json'; puts ({ exit_code: $exit_code, manifests: $manifests, lines: $lines, output: JSON.parse(File.read('lint_output.json')) }).to_json" > anubis_output.json

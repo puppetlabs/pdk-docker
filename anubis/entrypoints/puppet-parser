@@ -21,8 +21,13 @@ export PATH=$PATH:/opt/puppetlabs/pdk/private/ruby/2.5.8/bin:/opt/puppetlabs/pdk
 export GEM_PATH=/opt/puppetlabs/pdk/private/ruby/2.5.8/lib/ruby/gems/2.5.0:/opt/puppetlabs/pdk/share/cache/ruby/2.5.0:/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0
 
 # Run parser and emit output to json document
-/opt/puppetlabs/pdk/private/puppet/ruby/2.5.0/bin/puppet parser validate --render-as json manifests > parser_output.json || true
-exit_code=$?
+{
+  /opt/puppetlabs/pdk/private/puppet/ruby/2.5.0/bin/puppet parser validate --render-as json manifests > parser_output.json
+  exit_code=$?
+} || {
+  true
+}
+
 # Ensure file contains valid JSON if there's no output
 if [[ ! -s parser_output.json ]]; then
   echo 'null' > parser_output.json
