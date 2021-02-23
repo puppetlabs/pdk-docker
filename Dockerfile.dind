@@ -19,6 +19,7 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     useradd pdk && \
     echo 'pdk ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/pdk && \
+    usermod -aG docker pdk && \
     mkdir /home/pdk; chown pdk:pdk /home/pdk && \
     rm -rf /var/lib/apt/lists/*
 
