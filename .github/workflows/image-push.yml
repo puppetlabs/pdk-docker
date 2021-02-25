@@ -3,7 +3,7 @@ name: image-push
 on:
   push:
     branches:
-      - master
+      - main
       - stable
     tags:
       - '[0-9]+.*'
@@ -14,7 +14,7 @@ jobs:
     steps:
       -
         name: Set tag to nightly
-        if: endsWith(github.ref, '/master')
+        if: endsWith(github.ref, '/main')
         run: |
           echo "PDK_TAG=nightly" >> $GITHUB_ENV
           echo "ANUBIS_TAG=anubis-nightly" >> $GITHUB_ENV

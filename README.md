@@ -35,8 +35,8 @@ server is. `pdk-release.env` is then used by the `Dockerfile` (via `install-pdk-
 to build an image containing the specified release package.
 
 If changes to `pdk-release.env` are detected by the Jenkins job, a new commit is
-made to the `master` branch of this repo. (If the release is identified as a final
-release, the `stable` branch is rebased on `master` to pick up this change as well.)
+made to the `main` branch of this repo. (If the release is identified as a final
+release, the `stable` branch is rebased on `main` to pick up this change as well.)
 Lastly a new tag is made with the version number of the new release and then Jenkins
 pushes all commits and tags back to this repo.
 
