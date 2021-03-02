@@ -15,20 +15,15 @@ jobs:
       -
         name: Set tag to nightly
         if: endsWith(github.ref, '/main')
-        run: |
-          echo "PDK_TAG=nightly" >> $GITHUB_ENV
-          echo "ANUBIS_TAG=anubis-nightly" >> $GITHUB_ENV
+        run: echo "TAG=nightly" >> $GITHUB_ENV
       -
         name: Set tag to stable or latest
         if: endsWith(github.ref, '/stable')
-        run: |
-          echo "PDK_TAG=latest" >> $GITHUB_ENV
-          echo "ANUBIS_TAG=anubis-stable" >> $GITHUB_ENV
+        run: echo "TAG=latest" >> $GITHUB_ENV
       -
         name: Set tag to git tag name
         if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          echo "PDK_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
       -
         name: Checkout
         uses: actions/checkout@v2
@@ -53,19 +48,6 @@ jobs:
           username: ${{ secrets.AWS_ACCESS_KEY_ID }}
           password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       -
-        name: Build and push Anubis
-        # Only push branches for Anubis, not git tags
-        if: startsWith(github.ref, 'refs/tags/') == false
-        id: docker_build_anubis
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./anubis/Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.AWS_FORGE_ID }}.dkr.ecr.us-west-2.amazonaws.com/anubis:${{ env.ANUBIS_TAG }}
-            puppet/pdk:${{ env.ANUBIS_TAG }}
-      -
         name: Build and push PDK
         id: docker_build_pdk
         uses: docker/build-push-action@v2
@@ -73,8 +55,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.AWS_FORGE_ID }}.dkr.ecr.us-west-2.amazonaws.com/anubis:${{ env.PDK_TAG }}
-            puppet/pdk:${{ env.PDK_TAG }}
+            ${{ secrets.AWS_FORGE_ID }}.dkr.ecr.us-west-2.amazonaws.com/anubis:${{ env.TAG }}
+            puppet/pdk:${{ env.TAG }}
       -
         name: Image digest
         run: |
