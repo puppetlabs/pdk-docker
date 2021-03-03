@@ -1,4 +1,0 @@
-#!/bin/bash
-
-popd > /dev/null || exit
-popd > /dev/null || exit
