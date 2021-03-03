@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# WEBHOOK_URI: full URI to post results back to, no default
-# WEBHOOK_TOKEN: unique token to authenticate webhook request, no default
-
-# Check for required env vars
-: "${WEBHOOK_URI:?Need to set WEBHOOK_URI}"
-: "${WEBHOOK_TOKEN:?Need to set WEBHOOK_TOKEN}"
