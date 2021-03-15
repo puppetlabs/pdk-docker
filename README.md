@@ -44,3 +44,17 @@ Finally, Docker Hub is configured to watch the this repo and build/tag new image
 automatically based on the branch or tag that received new commits.
 
 [periodic Jenkins job]: https://jenkins-platform.delivery.puppetlabs.net/view/PDK/view/master/
+
+## How to use the Image
+
+Download a release from Docker Hub as detailed above. e.g.
+
+```
+docker pull puppet/pdk
+```
+
+Run it
+
+```bash
+docker run -v /path/to/your/module:/root puppet/pdk <pdk command>
+```
