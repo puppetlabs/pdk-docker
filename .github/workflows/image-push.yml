@@ -60,5 +60,4 @@ jobs:
       -
         name: Image digest
         run: |
-          echo 'Anubis: ${{ steps.docker_build_anubis.outputs.digest }}'
           echo 'PDK: ${{ steps.docker_build_pdk.outputs.digest }}'
