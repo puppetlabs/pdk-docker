@@ -1,0 +1,32 @@
+FROM ubuntu:bionic
+
+WORKDIR /root
+
+ADD install-pdk-release.sh .
+ADD install-onceover.sh .
+ADD pdk-release.env .
+
+RUN apt-get update && \
+    apt-get install -y curl openssh-client sudo gnupg lsb-release software-properties-common && \
+    ./install-pdk-release.sh && \
+    ./install-onceover.sh && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
+    apt-get update && \
+    apt-get install docker-ce -y && \
+    apt-get purge -y curl && \
+    apt-get autoremove -y && \
+    useradd pdk && \
+    echo 'pdk ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/pdk && \
+    mkdir /home/pdk; chown pdk:pdk /home/pdk && \
+    usermod -aG docker pdk && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV PATH="${PATH}:/opt/puppetlabs/pdk/private/git/bin"
+ENV PDK_DISABLE_ANALYTICS=true
+
+USER pdk
+
+WORKDIR /home/pdk
+
+ENTRYPOINT ["/opt/puppetlabs/pdk/bin/pdk"]
