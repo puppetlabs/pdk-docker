@@ -26,7 +26,7 @@ Github repositories and when a `.deb` package with the changes is actually avail
 we can't trigger Docker Hub builds immediately on commit/tag to either of those
 repositories.
 
-Instead, we have configured a [periodic Jenkins job]() (internal only right now, sorry)
+Instead, we have configured a [periodic Jenkins job](https://jenkins-platform.delivery.puppetlabs.net/view/PDK/view/main/) (internal only right now, sorry)
 which runs the `update-pdk-release-file.rb` script in this repo and then checks to see
 if that resulted in any changes to the `pdk-release.env` file. This file contains
 environment variables which indicate what the most recent PDK release package available
@@ -42,9 +42,6 @@ pushes all commits and tags back to this repo.
 
 Finally, Docker Hub is configured to watch the this repo and build/tag new images
 automatically based on the branch or tag that received new commits.
-
-[periodic Jenkins job]: https://jenkins-platform.delivery.puppetlabs.net/view/PDK/view/master/
-
 ## How to use the Image
 
 Download a release from Docker Hub as detailed above. e.g.
