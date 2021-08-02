@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:bionic-20210723
 
 WORKDIR /root
 
