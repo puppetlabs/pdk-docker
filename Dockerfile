@@ -23,5 +23,6 @@ RUN pdk new module docker --skip-interview && \
 
 ENV PATH="${PATH}:/opt/puppetlabs/pdk/private/git/bin"
 ENV PDK_DISABLE_ANALYTICS=true
+ENV LANG=C.UTF-8
 
 ENTRYPOINT ["/opt/puppetlabs/pdk/bin/pdk"]
