@@ -4,9 +4,9 @@ require "open-uri"
 require "oga"
 
 NIGHTLIES_HOST = "https://nightlies.puppetlabs.com"
-PDK_NIGHTLIES_BIONIC_BASE = "#{NIGHTLIES_HOST}/apt/pool/bionic/puppet6-nightly/p/pdk"
+PDK_NIGHTLIES_BIONIC_BASE = "#{NIGHTLIES_HOST}/apt/pool/bionic/puppet-tools/p/pdk"
 RELEASES_HOST = "https://apt.puppetlabs.com"
-PDK_RELEASES_BIONIC_BASE = "#{RELEASES_HOST}/pool/bionic/puppet6/p/pdk"
+PDK_RELEASES_BIONIC_BASE = "#{RELEASES_HOST}/pool/bionic/puppet-tools/p/pdk"
 PDK_RELEASE_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+)-1bionic_amd64/
 PDK_NIGHTLY_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+\..*)-1bionic_amd64/
 
