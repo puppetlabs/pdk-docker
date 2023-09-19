@@ -1,6 +1,6 @@
 # Puppet Development Kit (PDK) Docker Images
 
-[![Code Owners](https://img.shields.io/badge/owners-DevX--team-blue)](https://github.com/puppetlabs/pdk/blob/main/CODEOWNERS)
+[![Code Owners](https://img.shields.io/badge/owners-DevX--team-blue)](https://github.com/puppetlabs/pdk-docker/blob/main/CODEOWNERS)
 ![ci](https://github.com/puppetlabs/pdk-docker/actions/workflows/image-push.yml/badge.svg)
 
 This repository provides official docker images for the Puppet Development Kit (PDK).
