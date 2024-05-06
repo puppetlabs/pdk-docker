@@ -1,12 +1,12 @@
 #!/bin/sh
 
 # re-entrant script to support automatically switching to an unprivileged user
-# that matches the ownership of the RUN_VOLUME (see below)
+# that matches the ownership of the RUN_WORKDIR (see below)
 
 set -e
 
 RUN_USER=pdk
-RUN_VOLUME=/workspace
+RUN_WORKDIR="${PWD}"
 
 [ -z "${UID}" ] && UID=$(id -u)
 [ -z "${GID}" ] && GID=$(id -g)
@@ -16,10 +16,10 @@ RUN_VOLUME=/workspace
 # check if required path is mounted
 # check for deprecated /root volume
 if grep -sq " /root " < /proc/mounts ; then
-  [ -z "$ENTRYPOINT_RELOAD" ] && echo >&2 "mounting a volume to /root in the container is deprecated, use /workspace instead"
-  RUN_VOLUME=/root
-elif ! grep -sq " ${RUN_VOLUME} " < /proc/mounts ; then
-  echo >&2 "error: ${RUN_VOLUME} in the container is not mounted." ; exit 1
+  [ -z "$ENTRYPOINT_RELOAD" ] && echo >&2 "warning: the /root workdir is deprecated, use /workspace instead."
+  RUN_WORKDIR="/root"
+elif ! grep -sq " ${RUN_WORKDIR} " < /proc/mounts ; then
+  echo >&2 "error: ${RUN_WORKDIR} is not mounted in the container." ; exit 1
 fi
 
 create_user() {
@@ -34,18 +34,18 @@ create_user() {
 # skip if re-running under newly created user
 if [ -z "$ENTRYPOINT_RELOAD" ] ; then
   if [ -z "$RUNNING_NON_ROOT" ] ;  then
-    UID=$(stat -c '%u' "$RUN_VOLUME")
-    GID=$(stat -c '%g' "$RUN_VOLUME")
+    UID=$(stat -c '%u' "$RUN_WORKDIR")
+    GID=$(stat -c '%g' "$RUN_WORKDIR")
     [ "$UID" -eq 0 ] && RUN_USER="root"
   fi
   create_user "$UID" "$GID"
   # re-run with new user
-  exec su - $RUN_USER -c "cd $RUN_VOLUME ; ENTRYPOINT_RELOAD=1 $0 $*"
+  exec su - $RUN_USER -c "cd $RUN_WORKDIR ; ENTRYPOINT_RELOAD=1 $0 $*"
   exit
 fi
 
 # sanity check supported volumes
-for volume in ${RUN_VOLUME} /cache ; do
+for volume in ${RUN_WORKDIR} /cache ; do
   if [ ! -w "$volume" ] ; then
     echo >&2 "error: unable to write to ${volume}. Ensure permissions are correct on the host." ; exit 1
   fi

@@ -34,7 +34,7 @@ jobs:
             echo '::error::expected an error that was not returned'
             exit 1
           fi
-          grep -s 'error: /workspace in the container is not mounted' < "$GITHUB_WORKSPACE/.errout"
+          grep -s 'error: .* is not mounted in the container.' < "$GITHUB_WORKSPACE/.errout"
 
       - name: Test with a workspace volume
         run: |
@@ -73,4 +73,4 @@ jobs:
         run: |
           cd roottest
           docker run --rm -v `pwd`:/root ${{ steps.build.outputs.imageid }} new class toor 2>"$GITHUB_WORKSPACE/.errout"
-          grep -s 'mounting a volume to /root in the container is deprecated' < "$GITHUB_WORKSPACE/.errout"
+          grep -s 'the /root workdir is deprecated' < "$GITHUB_WORKSPACE/.errout"
