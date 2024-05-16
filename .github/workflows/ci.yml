@@ -1,0 +1,76 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build PDK Container
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: puppet/pdk:${{ github.sha }}
+
+      - name: Test with no workspace volume
+        run: |
+          if docker run --rm ${{ steps.build.outputs.imageid }} --version 2>"$GITHUB_WORKSPACE/.errout" ; then
+            echo '::error::expected an error that was not returned'
+            exit 1
+          fi
+          grep -s 'error: .* is not mounted in the container.' < "$GITHUB_WORKSPACE/.errout"
+
+      - name: Test with a workspace volume
+        run: |
+          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} --version 2>"$GITHUB_WORKSPACE/.errout" | grep -E '^[[:digit:]\.]+$'
+          grep -s 'mount a volume to /cache in the container to improve performance' < "$GITHUB_WORKSPACE/.errout"
+
+      - name: Test create new module
+        run: |
+          WORKSPACE_OWNER="$(stat -c '%u:%g' .)"
+          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} new module dockertest --skip-interview
+          if [ "${WORKSPACE_OWNER}" != "$(stat -c '%u:%g' dockertest)" ] ; then
+            echo "::error::pdk in container failed to run with same uid and gid of host workspace"
+            exit 1
+          fi
+          cd dockertest
+          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} new class test
+          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} validate
+          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} test unit
+
+      - name: Test running with root workspace
+        run: |
+          sudo cp -r dockertest roottest
+          cd roottest
+          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} new class root
+
+      - name: Test running with workspace ownership not matching user
+        run: |
+          cd roottest
+          if docker run --rm --user $UID:$GID -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} new class root 2>"$GITHUB_WORKSPACE/.errout" ; then
+            echo '::error::expected an error that was not returned'
+            exit 1
+          fi
+          grep -s 'error: unable to write to /workspace' < "$GITHUB_WORKSPACE/.errout"
+
+      - name: Test deprecated /root volume
+        run: |
+          cd roottest
+          docker run --rm -v `pwd`:/root ${{ steps.build.outputs.imageid }} new class toor 2>"$GITHUB_WORKSPACE/.errout"
+          grep -s 'the /root workdir is deprecated' < "$GITHUB_WORKSPACE/.errout"

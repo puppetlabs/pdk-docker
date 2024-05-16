@@ -5,6 +5,11 @@ WORKDIR /root
 ADD install-pdk-release.sh .
 ADD install-onceover.sh .
 ADD pdk-release.env .
+COPY entrypoint.sh /.entrypoint.sh
+
+RUN passwd -d root && \
+    mkdir /cache && \
+    chmod a+rwx /cache
 
 RUN apt-get update && \
     apt-get install -y curl openssh-client && \
@@ -25,4 +30,6 @@ ENV PATH="${PATH}:/opt/puppetlabs/pdk/private/git/bin"
 ENV PDK_DISABLE_ANALYTICS=true
 ENV LANG=C.UTF-8
 
-ENTRYPOINT ["/opt/puppetlabs/pdk/bin/pdk"]
+WORKDIR /workspace
+
+ENTRYPOINT ["/.entrypoint.sh"]

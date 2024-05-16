@@ -45,16 +45,23 @@ pushes all commits and tags back to this repo.
 
 Finally, Docker Hub is configured to watch the this repo and build/tag new images
 automatically based on the branch or tag that received new commits.
+
 ## How to use the Image
 
 Download a release from Docker Hub as detailed above. e.g.
 
 ```
-docker pull puppet/pdk
+docker pull puppet/pdk:latest
 ```
 
 Run it
 
 ```bash
-docker run -v /path/to/your/module:/root puppet/pdk <pdk command>
+docker run -v /path/to/module:/workspace puppet/pdk <pdk command>
+```
+
+Run it with persistent pdk cache
+
+```bash
+docker run -v /path/to/module:/workspace -v /path/to/cache:/cache puppet/pdk <pdk command>
 ```
