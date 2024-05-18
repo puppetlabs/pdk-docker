@@ -11,6 +11,7 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    if: github.repository == 'puppetlabs/pdk-docker'
     steps:
       -
         name: Set tag to nightly
