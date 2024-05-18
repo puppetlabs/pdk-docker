@@ -8,11 +8,11 @@ Accepted
 
 ## Context
 
-During recent work on the `puppetlabs/pdk-docker` github actions, I created a fork to test out the image push and unexpectedly--after enabling actions--discovered that it was running the ``image-push.yml`` workflow.  It was failing, of course, because my the pdk-docker's secrets are not also on my fork.  
+During recent work on the `puppetlabs/pdk-docker` github actions, I created a fork to test out the image push and unexpectedly--after enabling actions--discovered that it was running the ``image-push.yml`` workflow.  Fortunately because my fork did not contain any of the actual secrets, the workflow failed and did not cause any harm pushing up any images.  
 
 ![alt text](0001a.png)
 
-Fortunately because my fork did not contain any of the actual secrets, the workflow failed and did not cause any harm pushing up any images.  Nevertheless, I wanted to add a further precaution to this workflow.
+Nevertheless, I wanted to add a further precaution to this workflow.
 
 ## Decision
 
