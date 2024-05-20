@@ -46,11 +46,36 @@ pushes all commits and tags back to this repo.
 Finally, Docker Hub is configured to watch the this repo and build/tag new images
 automatically based on the branch or tag that received new commits.
 
+In summary:
+
+```mermaid
+sequenceDiagram
+box Grey On Jenkins
+participant J as pdk-docker-promote<br/>jenkins job
+participant p as pdk-docker<br/>(local workspace)
+end
+participant g as pdk-docker<br/>(github.com)
+participant d as Docker Hub
+participant ecr as Elastic Container Registry<br/>(AWS)  
+J ->>+ p: clone pdk-docker
+p ->>+ p: update-pdk-release-file.rb
+p ->>+ p: Has pdk-release.env changed?
+note right of p: "i.e., is there a new<br/>version of pdk?"
+alt no
+else yes
+    p ->> g: commit update to main
+    g ->> g: Trigger the "image-push"<br/>github action
+    g ->> d: push to registry
+    g ->> ecr: push to registry
+end
+p ->> J: finish
+```
+
 ## How to use the Image
 
 Download a release from Docker Hub as detailed above. e.g.
 
-```
+```bash
 docker pull puppet/pdk:latest
 ```
 
