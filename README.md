@@ -20,6 +20,14 @@ to [http://nightlies.puppet.com/](http://nightlies.puppet.com/), for example `1.
 To learn more about the PDK, visit [https://puppet.com/docs/pdk/latest/pdk.html](https://puppet.com/docs/pdk/latest/pdk.html)
 and [https://github.com/puppetlabs/pdk](https://github.com/puppetlabs/pdk).
 
+## Design Decisions
+
+<!-- adrlog -->
+
+* [ADR-0001](doc/adr/0001-to-prevent-forks-from-running-the-image-push-workflow.md) - To prevent forks from running the image-push workflow
+
+<!-- adrlogstop -->
+
 ## How images are built
 
 The PDK docker images are currently based on a fairly minimal Ubuntu 22.04 image.
