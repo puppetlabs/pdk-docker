@@ -22,7 +22,7 @@ and [https://github.com/puppetlabs/pdk](https://github.com/puppetlabs/pdk).
 
 ## How images are built
 
-The PDK docker images are currently based on a fairly minimal Ubuntu 18.04 image.
+The PDK docker images are currently based on a fairly minimal Ubuntu 22.04 image.
 From there, a PDK `.deb` package is installed. Since there is a lag time between
 when changes are merged to the `puppetlabs/pdk` or `puppetlabs/pdk-vanagon`
 Github repositories and when a `.deb` package with the changes is actually available,
@@ -50,7 +50,7 @@ automatically based on the branch or tag that received new commits.
 
 Download a release from Docker Hub as detailed above. e.g.
 
-```
+```bash
 docker pull puppet/pdk:latest
 ```
 
