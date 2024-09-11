@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 require "open-uri"
@@ -61,11 +62,20 @@ def pdk_release_versions
   version_map.compact
 end
 
-all_pdk_releases = (pdk_nightly_versions + pdk_release_versions).sort_by { |ver| ver[:released_at] }.reverse
-pdk_latest = all_pdk_releases.first || exit(1)
+# Retrieve all PDK releases
+all_pdk_releases = (pdk_nightly_versions + pdk_release_versions)
+
+# Find the newest ARM PDK release
+all_arm_releases = all_pdk_releases.select{ |i| i[:href].match(/arm64/) }.sort_by { |ver| ver[:released_at] }.reverse
+arm_latest = all_arm_releases.first || exit(1)
+
+# Find the newest AMD PDK release
+all_amd_releases = all_pdk_releases.select{ |i| i[:href].match(/amd64/) }.sort_by { |ver| ver[:released_at] }.reverse
+amd_latest = all_amd_releases.first || exit(1)
 
 File.open('pdk-release.env', 'w+') do |release_file|
-  release_file.puts "export PDK_DEB_URL=\"#{pdk_latest[:href]}\""
+  release_file.puts "export PDK_DEB_URL_ARM64=\"#{arm_latest[:href]}\""
+  release_file.puts "export PDK_DEB_URL_AMD64=\"#{amd_latest[:href]}\""
   release_file.puts "export PDK_VERSION=\"#{pdk_latest[:version]}\""
   release_file.puts "export PDK_RELEASE_TYPE=\"#{pdk_latest[:type]}\""
 end
