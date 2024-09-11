@@ -9,8 +9,8 @@ NIGHTLIES_HOST = "https://nightlies.puppetlabs.com"
 PDK_NIGHTLIES_BASE = "#{NIGHTLIES_HOST}/apt/pool/#{UBUNTU_RELEASE}/puppet-tools/p/pdk"
 RELEASES_HOST = "https://apt.puppetlabs.com"
 PDK_RELEASES_BASE = "#{RELEASES_HOST}/pool/#{UBUNTU_RELEASE}/puppet-tools/p/pdk"
-PDK_RELEASE_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+)-1#{UBUNTU_RELEASE}_amd64/
-PDK_NIGHTLY_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+\..*)-1#{UBUNTU_RELEASE}_amd64/
+PDK_RELEASE_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+)-1#{UBUNTU_RELEASE}_(amd|arm)64/
+PDK_NIGHTLY_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+\..*)-1#{UBUNTU_RELEASE}_(amd|arm)64/
 
 def pdk_nightlies_html
   URI.parse("#{PDK_NIGHTLIES_BASE}/index_by_lastModified_reverse.html").read
@@ -67,17 +67,16 @@ all_pdk_releases = (pdk_nightly_versions + pdk_release_versions)
 
 # Find the newest ARM PDK release
 all_arm_releases = all_pdk_releases.select{ |i| i[:href].match(/arm64/) }.sort_by { |ver| ver[:released_at] }.reverse
-arm_latest = all_arm_releases.first || exit(1)
-
+arm_latest = all_arm_releases.first
 # Find the newest AMD PDK release
 all_amd_releases = all_pdk_releases.select{ |i| i[:href].match(/amd64/) }.sort_by { |ver| ver[:released_at] }.reverse
-amd_latest = all_amd_releases.first || exit(1)
+amd_latest = all_amd_releases.first
 
 File.open('pdk-release.env', 'w+') do |release_file|
   release_file.puts "export PDK_DEB_URL_ARM64=\"#{arm_latest[:href]}\""
   release_file.puts "export PDK_DEB_URL_AMD64=\"#{amd_latest[:href]}\""
-  release_file.puts "export PDK_VERSION=\"#{pdk_latest[:version]}\""
-  release_file.puts "export PDK_RELEASE_TYPE=\"#{pdk_latest[:type]}\""
+  release_file.puts "export PDK_VERSION=\"#{amd_latest[:version]}\""
+  release_file.puts "export PDK_RELEASE_TYPE=\"#{amd_latest[:type]}\""
 end
 
 exit(0)
