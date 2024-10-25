@@ -20,9 +20,17 @@ to [http://nightlies.puppet.com/](http://nightlies.puppet.com/), for example `1.
 To learn more about the PDK, visit [https://puppet.com/docs/pdk/latest/pdk.html](https://puppet.com/docs/pdk/latest/pdk.html)
 and [https://github.com/puppetlabs/pdk](https://github.com/puppetlabs/pdk).
 
+## Design Decisions
+
+<!-- adrlog -->
+
+* [ADR-0001](doc/adr/0001-to-prevent-forks-from-running-the-image-push-workflow.md) - To prevent forks from running the image-push workflow
+
+<!-- adrlogstop -->
+
 ## How images are built
 
-The PDK docker images are currently based on a fairly minimal Ubuntu 18.04 image.
+The PDK docker images are currently based on a fairly minimal Ubuntu 22.04 image.
 From there, a PDK `.deb` package is installed. Since there is a lag time between
 when changes are merged to the `puppetlabs/pdk` or `puppetlabs/pdk-vanagon`
 Github repositories and when a `.deb` package with the changes is actually available,
@@ -89,4 +97,28 @@ Run it with persistent pdk cache
 
 ```bash
 docker run -v /path/to/module:/workspace -v /path/to/cache:/cache puppet/pdk <pdk command>
+```
+
+## Contributing
+
+When updating the repository and if making a design decision, please make sure to record the design decision.  To progress this first make sure the following tools are installed on your laptop:
+
+* [adr-tools](https://github.com/npryce/adr-tools)
+* [adr-log](https://github.com/adr/adr-log)
+
+Create a new design decision
+
+```bash
+# create a new design decision, e.g., `adr new "Title of your design decision"`
+adr new "Do whiteboard wednesday talks" 
+
+# fill in the "Context", "Decision", and "Consequences" of the new doc
+vim doc/adr/0002-do-whiteboard-wednesday-talks.md
+```
+
+After adding new design decision records, then remember to update the table of contents in the root-level README:
+
+```bash
+# update the `README.md` table of contents to include the newest design decision
+adr-log -i README.md -d doc
 ```
