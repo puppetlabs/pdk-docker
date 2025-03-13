@@ -5,15 +5,15 @@ require "open-uri"
 require "oga"
 
 UBUNTU_RELEASE = "jammy"
-NIGHTLIES_HOST = "https://nightlies.puppetlabs.com"
-PDK_NIGHTLIES_BASE = "#{NIGHTLIES_HOST}/apt/pool/#{UBUNTU_RELEASE}/puppet-tools/p/pdk"
+NIGHTLIES_HOST = "https://artifactory.delivery.puppetlabs.net/artifactory/internal_nightly__local"
+PDK_NIGHTLIES_BASE = "#{NIGHTLIES_HOST}/apt/pool/#{UBUNTU_RELEASE}/puppet-nightly/p/pdk"
 RELEASES_HOST = "https://apt.puppetlabs.com"
 PDK_RELEASES_BASE = "#{RELEASES_HOST}/pool/#{UBUNTU_RELEASE}/puppet-tools/p/pdk"
 PDK_RELEASE_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+)-1#{UBUNTU_RELEASE}_(amd|arm)64/
 PDK_NIGHTLY_PKG_REGEX = /^pdk_(?<version>\d+\.\d+\.\d+\.\d+\..*)-1#{UBUNTU_RELEASE}_(amd|arm)64/
 
 def pdk_nightlies_html
-  URI.parse("#{PDK_NIGHTLIES_BASE}/index_by_lastModified_reverse.html").read
+  URI.parse("#{PDK_NIGHTLIES_BASE}").read
 rescue OpenURI::HTTPError
   nil
 end
@@ -25,13 +25,21 @@ rescue OpenURI::HTTPError
 end
 
 def pdk_nightly_versions
-  doc = Oga.parse_html(pdk_nightlies_html)
+  doc = Oga.parse_html(pdk_nightlies_html.squeeze(' '))
+  version_map = {}
 
-  version_map = doc.css('a[href$="deb"]').collect do |el|
+
+  # The Oga parse does not return the time correctly associated with each entry
+  # On top of this, when new files are uploaded to Artifactory they are all recreated, so there is no difference in the time
+  # So we are going to set a base time of the page and then increment it by several seconds for each version
+  # Note: this is trusting that the images are in order, which they should be
+  base_time = Time.parse(pdk_nightlies_html.match(/(\d{2}-\D{3,4}-\d{4}\s\d{2}:\d{2})/)[0])
+
+  version_map = doc.css('a[href$="deb"]').collect.with_index do |el, index|
     if matches = el['href'].match(PDK_NIGHTLY_PKG_REGEX)
-      {
+     {
         :version => matches[:version],
-        :released_at => Time.parse(el.parent.next_element.text),
+        :released_at => base_time + index,
         :href => "#{PDK_NIGHTLIES_BASE}/#{el['href']}",
         :type => "nightly",
       }
@@ -44,9 +52,9 @@ def pdk_nightly_versions
 end
 
 def pdk_release_versions
-  doc = Oga.parse_html(pdk_releases_html)
+  release_doc = Oga.parse_html(pdk_releases_html)
 
-  version_map = doc.css('a[href$="deb"]').collect do |el|
+  version_map = release_doc.css('a[href$="deb"]').collect do |el|
     if matches = el['href'].match(PDK_RELEASE_PKG_REGEX)
       {
         :version => matches[:version],
