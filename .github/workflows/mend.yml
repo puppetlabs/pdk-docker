@@ -11,5 +11,55 @@ on:
 jobs:
 
   mend:
-    uses: "puppetlabs/cat-github-actions/.github/workflows/mend_ruby.yml@main"
+    uses: "puppetlabs/cat-github-actions/.github/workflows/tooling_mend_ruby.yml@main"
     secrets: "inherit"
+  
+  mend_package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Activate twingate to obtain unreleased build
+        uses: twingate/github-action@main
+        with:
+          service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
+
+      - name: Source details on the latest release
+        id: latest
+        run: |
+          source pdk-release.env
+
+      - name: Output release status and a link to the current build
+        run: |
+          echo $PDK_RELEASE_TYPE   
+          echo $PDK_VERSION
+          echo $PDK_DEB_URL_AMD64       
+
+      - name: Install PDK
+        run: |
+          wget $PDK_DEB_URL_AMD64;
+          sudo dpkg -i ${{ $PDK_VERSION }}-1jammy_amd64.deb;
+          sudo apt-get update -y;
+          sudo apt-get install pdk -y;
+          pdk --version;
+
+      - uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: 2.7
+
+      - uses: "actions/setup-java@v4"
+        with:
+          distribution: "temurin"
+          java-version: "17"
+  
+      - name: Download unified agent
+        run: |
+          curl -o wss-unified-agent.jar https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar;
+
+      - name: Run Scan
+        run: |
+          sudo -E java -jar wss-unified-agent.jar -d /opt/puppetlabs/pdk
+        env:
+          WS_APIKEY: ${{ secrets.MEND_API_KEY }}
+          WS_WSS_URL: https://saas-eu.whitesourcesoftware.com/agent
+          WS_USERKEY: ${{ secrets.MEND_TOKEN }}
+          WS_PRODUCTNAME: "DevX"
+          WS_PROJECTNAME: "${{  github.event.repository.name }}-package"
