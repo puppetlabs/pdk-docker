@@ -25,9 +25,9 @@ jobs:
           service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v2.3.0
+        uses: falti/dotenv-action@v1.1.4
         with:
-          load-mode: strict
+          path: ./pdk-release.env
 
       - name: Output release status and a link to the current build
         run: |
