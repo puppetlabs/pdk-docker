@@ -17,26 +17,28 @@ jobs:
   mend_package:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Activate twingate to obtain unreleased build
         uses: twingate/github-action@main
         with:
           service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
 
-      - name: Source details on the latest release
-        id: latest
-        run: |
-          source pdk-release.env
+      - name: Load .env file
+        uses: falti/dotenv-action@v1.1.4
+        with:
+          path: ./pdk-release.env
 
       - name: Output release status and a link to the current build
         run: |
-          echo $PDK_RELEASE_TYPE   
-          echo $PDK_VERSION
-          echo $PDK_DEB_URL_AMD64       
+          echo ${{ env.PDK_RELEASE_TYPE }}   
+          echo ${{ env.PDK_VERSION }}
+          echo ${{ env.PDK_DEB_URL_AMD64 }}    
 
       - name: Install PDK
         run: |
           wget $PDK_DEB_URL_AMD64;
-          sudo dpkg -i ${{ $PDK_VERSION }}-1jammy_amd64.deb;
+          sudo dpkg -i "${{ env.PDK_VERSION }}-1jammy_amd64.deb";
           sudo apt-get update -y;
           sudo apt-get install pdk -y;
           pdk --version;
