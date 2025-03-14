@@ -8,6 +8,9 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+env:
+  ENV_FILE: './pdk-release.env'
+
 jobs:
 
   mend:
@@ -17,26 +20,28 @@ jobs:
   mend_package:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Activate twingate to obtain unreleased build
         uses: twingate/github-action@main
         with:
           service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
 
-      - name: Source details on the latest release
-        id: latest
-        run: |
-          source pdk-release.env
+      - name: Load .env file
+        uses: c-py/action-dotenv-to-setenv@v2
+        with:
+          env-file: ${{ env.ENV_FILE }}
 
       - name: Output release status and a link to the current build
         run: |
-          echo $PDK_RELEASE_TYPE   
-          echo $PDK_VERSION
-          echo $PDK_DEB_URL_AMD64       
+          echo ${{ env.PDK_RELEASE_TYPE }}   
+          echo ${{ env.PDK_VERSION }}
+          echo ${{ env.PDK_DEB_URL_AMD64 }}    
 
       - name: Install PDK
         run: |
           wget $PDK_DEB_URL_AMD64;
-          sudo dpkg -i ${{ $PDK_VERSION }}-1jammy_amd64.deb;
+          sudo dpkg -i ./pdk_${{ env.PDK_VERSION }}-1jammy_amd64.deb;
           sudo apt-get update -y;
           sudo apt-get install pdk -y;
           pdk --version;
