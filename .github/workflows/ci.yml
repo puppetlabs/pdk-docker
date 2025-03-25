@@ -16,6 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Activate twingate access PDK builds
+        uses: twingate/github-action@main
+        with:
+          service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 

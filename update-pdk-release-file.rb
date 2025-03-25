@@ -40,7 +40,8 @@ def pdk_nightly_versions
      {
         :version => matches[:version],
         :released_at => base_time + index,
-        :href => "#{PDK_NIGHTLIES_BASE}/#{el['href']}",
+        :install_file => el['href'],
+        :file_path => "#{PDK_NIGHTLIES_BASE}/#{el['href']}",
         :type => "nightly",
       }
     else
@@ -59,7 +60,8 @@ def pdk_release_versions
       {
         :version => matches[:version],
         :released_at => Time.parse(el.parent.next_element.text),
-        :href => "#{PDK_RELEASES_BASE}/#{el['href']}",
+        :install_file => el['href'],
+        :file_path => "#{PDK_RELEASES_BASE}/#{el['href']}",
         :type => "release",
       }
     else
@@ -74,17 +76,22 @@ end
 all_pdk_releases = (pdk_nightly_versions + pdk_release_versions)
 
 # Find the newest ARM PDK release
-all_arm_releases = all_pdk_releases.select{ |i| i[:href].match(/arm64/) }.sort_by { |ver| ver[:released_at] }.reverse
+all_arm_releases = all_pdk_releases.select{ |i| i[:file_path].match(/arm64/) }.sort_by { |ver| ver[:released_at] }.reverse
 arm_latest = all_arm_releases.first
 # Find the newest AMD PDK release
-all_amd_releases = all_pdk_releases.select{ |i| i[:href].match(/amd64/) }.sort_by { |ver| ver[:released_at] }.reverse
+all_amd_releases = all_pdk_releases.select{ |i| i[:file_path].match(/amd64/) }.sort_by { |ver| ver[:released_at] }.reverse
 amd_latest = all_amd_releases.first
 
 File.open('pdk-release.env', 'w+') do |release_file|
-  release_file.puts "export PDK_DEB_URL_ARM64=\"#{arm_latest[:href]}\""
-  release_file.puts "export PDK_DEB_URL_AMD64=\"#{amd_latest[:href]}\""
-  release_file.puts "export PDK_VERSION=\"#{amd_latest[:version]}\""
-  release_file.puts "export PDK_RELEASE_TYPE=\"#{amd_latest[:type]}\""
+  release_file.puts "PDK_VERSION=\"#{amd_latest[:version]}\""
+
+  release_file.puts "PDK_DEB_URL_ARM64=\"#{arm_latest[:file_path]}\""
+  release_file.puts "ARM_INSTALL_FILE=\"#{amd_latest[:install_file]}\""
+
+  release_file.puts "PDK_DEB_URL_AMD64=\"#{amd_latest[:file_path]}\""
+  release_file.puts "AMD_INSTALL_FILE=\"#{amd_latest[:install_file]}\""
+
+  release_file.puts "PDK_RELEASE_TYPE=\"#{amd_latest[:type]}\""
 end
 
 exit(0)
