@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Activate twingate to obtain unreleased build
+      - name: Activate twingate to access PDK builds
         uses: twingate/github-action@main
         with:
           service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
@@ -34,14 +34,15 @@ jobs:
 
       - name: Output release status and a link to the current build
         run: |
-          echo ${{ env.PDK_RELEASE_TYPE }}   
+          echo ${{ env.PDK_RELEASE_TYPE }}
           echo ${{ env.PDK_VERSION }}
-          echo ${{ env.PDK_DEB_URL_AMD64 }}    
+          echo ${{ env.AMD_INSTALL_FILE }}
+          echo ${{ env.PDK_DEB_URL_AMD64 }}
 
       - name: Install PDK
         run: |
           wget $PDK_DEB_URL_AMD64;
-          sudo dpkg -i ./pdk_${{ env.PDK_VERSION }}-1jammy_amd64.deb;
+          sudo dpkg -i ./${{ env.AMD_INSTALL_FILE }};
           sudo apt-get update -y;
           sudo apt-get install pdk -y;
           pdk --version;
