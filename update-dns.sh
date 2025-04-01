@@ -10,6 +10,6 @@ if grep -q "$HOSTNAME" "$HOSTS_FILE"; then
     echo "The hostname $HOSTNAME already exists in $HOSTS_FILE."
 else
     # Add the entry to the hosts file
-    echo "$IP_ADDRESS $HOSTNAME" | sudo tee -a "$HOSTS_FILE" > /dev/null
-    echo "The hostname $HOSTNAME has been added to $HOSTS_FILE."
+    echo "${IP_ADDRESS} ${HOSTNAME}" >> "${HOSTS_FILE}"
+    echo "The hostname ${HOSTNAME} has been added to ${HOSTS_FILE}."
 fi
