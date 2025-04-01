@@ -23,7 +23,13 @@ jobs:
 
       - name: Update host file
         run: |
-          sudo echo 10.16.76.23 artifactory.delivery.puppetlabs.net >> /etc/hosts
+          echo 10.16.76.23 artifactory.delivery.puppetlabs.net | sudo tee -a /etc/hosts > /dev/null
+
+      - name: Cat host file
+        run: |
+          echo "-----------------"
+          cat /etc/hosts
+          echo "-----------------"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
