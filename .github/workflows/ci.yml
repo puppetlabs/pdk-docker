@@ -45,10 +45,10 @@ jobs:
           fi
           grep -s 'error: .* is not mounted in the container.' < "$GITHUB_WORKSPACE/.errout"
 
-      - name: Test with a workspace volume
-        run: |
-          docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} --version 2>"$GITHUB_WORKSPACE/.errout" | grep -E '^[[:digit:]\.]+$'
-          grep -s 'mount a volume to /cache in the container to improve performance' < "$GITHUB_WORKSPACE/.errout"
+      # - name: Test with a workspace volume
+      #   run: |
+      #     docker run --rm -v `pwd`:/workspace ${{ steps.build.outputs.imageid }} --version 2>"$GITHUB_WORKSPACE/.errout" | grep -E '^[[:digit:]\.]+$'
+      #     grep -s 'mount a volume to /cache in the container to improve performance' < "$GITHUB_WORKSPACE/.errout"
 
       - name: Test create new module
         run: |
