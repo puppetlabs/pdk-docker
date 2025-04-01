@@ -5,6 +5,7 @@ WORKDIR /root
 ADD install-pdk-release.sh .
 ADD install-bolt-release.sh .
 ADD install-onceover.sh .
+ADD update-dns.sh .
 ADD pdk-release.env .
 ADD bolt-release.env .
 COPY entrypoint.sh /.entrypoint.sh
